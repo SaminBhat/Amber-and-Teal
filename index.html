@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amber &amp; Teal — The Ancient Duel</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            serif: ['"Cormorant Garamond"', 'Georgia', 'serif'],
+            mono:  ['"DM Mono"', 'monospace'],
+          },
+          colors: {
+            bg:       '#111110',
+            surface:  '#1a1a18',
+            surface2: '#242422',
+            amber: {
+              DEFAULT: '#c8823a',
+              light:   '#eaa05a',
+              lighter: '#f5c078',
+            },
+            teal: {
+              DEFAULT: '#2e9080',
+              light:   '#50c0aa',
+              lighter: '#80ddd0',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Custom styles that cannot be expressed purely in Tailwind utilities -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="bg-bg font-mono text-[#e8e2d6] min-h-screen flex items-center justify-center p-6">
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: MENU
+  ════════════════════════════════════════════ -->
+  <div id="screen-menu" class="w-full max-w-xl flex flex-col items-center gap-6">
+
+    <!-- Title -->
+    <div class="text-center">
+      <h1 class="font-serif font-light tracking-[0.14em] text-[2.2rem] leading-none">
+        <em class="not-italic text-amber-light">Amber</em>
+        <span class="text-[#6e6860] text-[1.6rem] mx-2">&amp;</span>
+        <em class="not-italic text-teal-light">Teal</em>
+      </h1>
+      <p class="text-[0.52rem] tracking-[0.38em] text-[#6e6860] uppercase mt-2">The Ancient Duel</p>
+      <p class="text-[0.62rem] tracking-[0.1em] text-[#6e6860] mt-3 leading-loose">
+        Terra plays amber stones &middot; Timber plays teal tiles<br />
+        Three in a line wins &middot; Pieces move along connected edges
+      </p>
+    </div>
+
+    <!-- Opponent selector -->
+    <div class="w-full">
+      <p class="text-[0.52rem] tracking-[0.32em] text-[#6e6860] uppercase mb-2 pl-0.5">Opponent</p>
+      <div class="flex gap-3">
+        <button id="btn-pvp" class="opt-btn selected flex-1" data-mode="pvp">
+          Player vs Player
+        </button>
+        <button id="btn-pvc" class="opt-btn flex-1" data-mode="pvc">
+          Player vs Computer
+        </button>
+      </div>
+    </div>
+
+    <!-- Variant selector -->
+    <div class="w-full">
+      <p class="text-[0.52rem] tracking-[0.32em] text-[#6e6860] uppercase mb-2 pl-0.5">Variant</p>
+      <div class="flex gap-3">
+        <button id="btn-blank" class="opt-btn selected flex-1" data-variant="blank">
+          The Empty Grid<br />
+          <span class="text-[0.6em] opacity-40">Place pieces, then move</span>
+        </button>
+        <button id="btn-standoff" class="opt-btn flex-1" data-variant="standoff">
+          Frontline Standoff<br />
+          <span class="text-[0.6em] opacity-40">Begin in movement phase</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="w-full h-px bg-white/[0.07]"></div>
+
+    <button id="btn-start" class="start-btn w-full">Begin the Duel</button>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       SCREEN: GAME
+  ════════════════════════════════════════════ -->
+  <div id="screen-game" class="hidden w-full max-w-xl flex flex-col items-center gap-5">
+
+    <!-- Title (compact) -->
+    <div class="text-center">
+      <h1 class="font-serif font-light tracking-[0.14em] text-[1.7rem] leading-none">
+        <em class="not-italic text-amber-light">Amber</em>
+        <span class="text-[#6e6860] text-[1.3rem] mx-2">&amp;</span>
+        <em class="not-italic text-teal-light">Teal</em>
+      </h1>
+    </div>
+
+    <!-- Role badge (PvC only) -->
+    <div id="role-badge" class="hidden text-[0.6rem] tracking-[0.22em] text-[#6e6860] border border-white/[0.07] rounded-sm px-3 py-1.5 bg-surface"></div>
+
+    <!-- Status bar: player indicators + phase pill -->
+    <div class="w-full flex items-center justify-between px-1">
+      <div id="ind-p1" class="flex items-center gap-2 text-[0.62rem] tracking-[0.16em] uppercase transition-all duration-300">
+        <div id="dot-p1" class="player-dot dot-amber"></div>
+        <span id="label-p1">Terra</span>
+      </div>
+      <div id="phase-pill" class="text-[0.5rem] tracking-[0.24em] text-[#3a3830] uppercase border border-white/[0.07] px-3 py-1 rounded-sm">
+        Placement
+      </div>
+      <div id="ind-p2" class="flex items-center gap-2 text-[0.62rem] tracking-[0.16em] uppercase transition-all duration-300">
+        <span id="label-p2">Timber</span>
+        <div id="dot-p2" class="player-dot dot-teal"></div>
+      </div>
+    </div>
+
+    <!-- Placement tray (shown during place phase) -->
+    <div id="tray" class="hidden flex gap-4 items-center justify-center">
+      <div class="flex gap-1.5 items-center" id="tray-p1">
+        <div class="tray-stone" data-idx="0"></div>
+        <div class="tray-stone" data-idx="1"></div>
+        <div class="tray-stone" data-idx="2"></div>
+      </div>
+      <div class="w-px h-4 bg-white/[0.07] mx-1"></div>
+      <div class="flex gap-1.5 items-center" id="tray-p2">
+        <div class="tray-tile" data-idx="0"></div>
+        <div class="tray-tile" data-idx="1"></div>
+        <div class="tray-tile" data-idx="2"></div>
+      </div>
+    </div>
+
+    <!-- ─── BOARD ─── -->
+    <div id="board-container" class="relative" style="width:420px;height:420px;">
+      <!-- SVG board lines rendered here by JS -->
+      <svg id="board-svg" class="absolute inset-0 w-full h-full" viewBox="0 0 420 420">
+        <g id="svg-lines"></g>
+      </svg>
+      <!-- Node buttons injected here by JS -->
+      <div id="board-nodes"></div>
+    </div>
+
+    <!-- Info / message bar -->
+    <div id="info-bar" class="info-bar w-full">
+      Select a piece to move
+    </div>
+
+    <!-- Action buttons -->
+    <div class="flex gap-3 w-full">
+      <button id="btn-restart" class="ghost-btn flex-1">Restart</button>
+      <button id="btn-newgame" class="ghost-btn ghost-btn-primary flex-1">New Game</button>
+    </div>
+
+  </div><!-- /screen-game -->
+
+  <script src="script.js"></script>
+</body>
+</html>

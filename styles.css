@@ -1,0 +1,315 @@
+/* ============================================================
+   AMBER & TEAL — THE ANCIENT DUEL
+   Custom styles beyond what Tailwind utilities can express.
+   All color values mirror the Tailwind config in index.html.
+   ============================================================ */
+
+/* ── CSS CUSTOM PROPERTIES ── */
+:root {
+  --amber:         #c8823a;
+  --amber-light:   #eaa05a;
+  --amber-lighter: #f5c078;
+  --amber-glow:    rgba(200, 130, 58, 0.15);
+
+  --teal:          #2e9080;
+  --teal-light:    #50c0aa;
+  --teal-lighter:  #80ddd0;
+  --teal-glow:     rgba(46, 144, 128, 0.15);
+
+  --bg:            #111110;
+  --surface:       #1a1a18;
+  --surface2:      #242422;
+  --border:        rgba(255, 255, 255, 0.07);
+  --border2:       rgba(255, 255, 255, 0.13);
+  --text:          #e8e2d6;
+  --text-muted:    #6e6860;
+  --text-dim:      #3a3830;
+
+  --valid-bg:      rgba(100, 200, 140, 0.25);
+  --valid-border:  rgba(100, 220, 150, 0.65);
+}
+
+/* ── BASE ── */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  background-color: var(--bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── MENU OPTION BUTTONS ── */
+.opt-btn {
+  background:    var(--surface);
+  border:        1px solid var(--border);
+  color:         var(--text-muted);
+  font-family:   'DM Mono', monospace;
+  font-size:     0.7rem;
+  letter-spacing: 0.08em;
+  padding:       0.85rem 0.65rem;
+  cursor:        pointer;
+  border-radius: 3px;
+  text-align:    center;
+  line-height:   1.6;
+  transition:    border-color 0.2s, color 0.2s, background 0.2s;
+}
+.opt-btn:hover {
+  border-color: var(--border2);
+  color:        var(--text);
+}
+.opt-btn.selected {
+  border-color: var(--amber);
+  color:        var(--amber-light);
+  background:   var(--amber-glow);
+}
+
+/* ── START BUTTON ── */
+.start-btn {
+  background:     transparent;
+  border:         1px solid var(--amber);
+  color:          var(--amber-light);
+  font-family:    'Cormorant Garamond', serif;
+  font-size:      1.15rem;
+  font-weight:    300;
+  letter-spacing: 0.35em;
+  padding:        1.05rem;
+  cursor:         pointer;
+  border-radius:  2px;
+  transition:     background 0.25s, letter-spacing 0.25s;
+}
+.start-btn:hover {
+  background:     var(--amber-glow);
+  letter-spacing: 0.45em;
+}
+
+/* ── PLAYER INDICATOR DOTS ── */
+.player-dot {
+  width:         10px;
+  height:        10px;
+  border-radius: 50%;
+  flex-shrink:   0;
+  transition:    box-shadow 0.3s, opacity 0.3s;
+}
+.dot-amber {
+  background:  var(--amber);
+  box-shadow:  0 0 8px var(--amber);
+}
+.dot-teal {
+  background:  var(--teal-light);
+  box-shadow:  0 0 8px var(--teal-light);
+}
+.dot-off {
+  box-shadow: none;
+  opacity:    0.22;
+}
+
+/* Active / inactive indicator text */
+#ind-p1.active  { color: var(--amber-light); }
+#ind-p2.active  { color: var(--teal-light);  }
+#ind-p1.inactive,
+#ind-p2.inactive { color: var(--text-dim); }
+
+/* ── PLACEMENT TRAY ── */
+.tray-stone {
+  width:         14px;
+  height:        14px;
+  border-radius: 50%;
+  background:    var(--amber);
+  opacity:       0.72;
+  transition:    opacity 0.3s;
+}
+.tray-tile {
+  width:         12px;
+  height:        12px;
+  border-radius: 2px;
+  background:    var(--teal-light);
+  opacity:       0.72;
+  transform:     rotate(45deg);
+  transition:    opacity 0.3s;
+}
+.tray-stone.placed,
+.tray-tile.placed { opacity: 0.14; }
+
+/* ── BOARD NODES ── */
+.node-btn {
+  position:         absolute;
+  width:            64px;
+  height:           64px;
+  transform:        translate(-50%, -50%);
+  cursor:           pointer;
+  display:          flex;
+  align-items:      center;
+  justify-content:  center;
+  background:       transparent;
+  border:           none;
+  padding:          0;
+  z-index:          10;
+  transition:       transform 0.15s;
+}
+.node-btn:hover { transform: translate(-50%, -50%) scale(1.1); }
+
+/* Empty intersection dot */
+.empty-dot {
+  width:         12px;
+  height:        12px;
+  border-radius: 50%;
+  background:    var(--surface2);
+  border:        1px solid var(--border2);
+  transition:    background 0.2s, border-color 0.2s, box-shadow 0.2s;
+}
+
+/* Valid move target — pulsing green dot */
+.node-btn.valid-target .empty-dot {
+  background:   var(--valid-bg);
+  border:       1.5px solid var(--valid-border);
+  box-shadow:   0 0 14px rgba(100, 220, 150, 0.5);
+  animation:    vpulse 1.3s ease-in-out infinite;
+}
+@keyframes vpulse {
+  0%, 100% { box-shadow: 0 0 6px rgba(100, 220, 150, 0.3);  }
+  50%       { box-shadow: 0 0 18px rgba(100, 220, 150, 0.7); }
+}
+
+/* ── PIECES ── */
+
+/* Terra — organic amber stone */
+.piece-amber {
+  width:         44px;
+  height:        44px;
+  border-radius: 52% 48% 55% 45% / 50% 52% 48% 50%;
+  background:    radial-gradient(
+    circle at 38% 32%,
+    var(--amber-lighter),
+    var(--amber) 55%,
+    #7a3e0e
+  );
+  border:        1.5px solid rgba(255, 190, 90, 0.35);
+  box-shadow:
+    0 4px 18px rgba(200, 130, 58, 0.55),
+    inset 0 1px 4px rgba(255, 230, 150, 0.38),
+    inset 0 -2px 3px rgba(100, 50, 0, 0.45);
+  transition:    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                 box-shadow 0.28s;
+}
+
+/* Timber — rotated diamond tile */
+.piece-teal {
+  width:         36px;
+  height:        36px;
+  border-radius: 6px;
+  transform:     rotate(45deg);
+  background:    linear-gradient(
+    135deg,
+    var(--teal-lighter) 0%,
+    var(--teal-light)   40%,
+    var(--teal)         100%
+  );
+  border:        1.5px solid rgba(80, 220, 200, 0.35);
+  box-shadow:
+    0 4px 18px rgba(46, 144, 128, 0.55),
+    inset 0 1px 4px rgba(180, 255, 240, 0.25);
+  transition:    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+                 box-shadow 0.28s;
+}
+
+/* Selected state */
+.piece-amber.selected {
+  transform:   scale(1.2);
+  box-shadow:
+    0 0 0 3px rgba(255, 200, 80, 0.72),
+    0 0 26px rgba(255, 200, 80, 0.5),
+    inset 0 1px 4px rgba(255, 230, 150, 0.38) !important;
+}
+.piece-teal.selected {
+  transform:   rotate(45deg) scale(1.2);
+  box-shadow:
+    0 0 0 3px rgba(80, 220, 200, 0.72),
+    0 0 26px rgba(80, 220, 200, 0.5),
+    inset 0 1px 4px rgba(180, 255, 240, 0.25) !important;
+}
+
+/* Win pulse animation */
+.piece-amber.win-piece { animation: wpulse-amber 0.7s ease-in-out infinite alternate; }
+.piece-teal.win-piece  { animation: wpulse-teal  0.7s ease-in-out infinite alternate; }
+
+@keyframes wpulse-amber {
+  from { box-shadow: 0 0 10px rgba(255, 200, 80, 0.4), 0 0 20px rgba(255, 200, 80, 0.3); }
+  to   { box-shadow: 0 0 24px rgba(255, 200, 80, 0.8), 0 0 48px rgba(255, 200, 80, 0.55); }
+}
+@keyframes wpulse-teal {
+  from { box-shadow: 0 0 10px rgba(80, 220, 200, 0.4), 0 0 20px rgba(80, 220, 200, 0.3); }
+  to   { box-shadow: 0 0 24px rgba(80, 220, 200, 0.8), 0 0 48px rgba(80, 220, 200, 0.55); }
+}
+
+/* ── INFO / MESSAGE BAR ── */
+.info-bar {
+  min-height:     2.6rem;
+  display:        flex;
+  align-items:    center;
+  justify-content: center;
+  font-size:      0.63rem;
+  letter-spacing: 0.2em;
+  color:          var(--text-muted);
+  text-transform: uppercase;
+  text-align:     center;
+  padding:        0.6rem 1rem;
+  border:         1px solid var(--border);
+  border-radius:  2px;
+  background:     var(--surface);
+  transition:     background 0.3s, border-color 0.3s, color 0.3s;
+}
+.info-bar.win-msg {
+  color:          var(--amber-light);
+  border-color:   var(--amber);
+  background:     var(--amber-glow);
+  font-family:    'Cormorant Garamond', serif;
+  font-size:      1.08rem;
+  letter-spacing: 0.22em;
+  font-weight:    400;
+  text-transform: none;
+}
+.info-bar.draw-msg {
+  font-family:    'Cormorant Garamond', serif;
+  font-size:      1rem;
+  letter-spacing: 0.22em;
+  text-transform: none;
+}
+
+/* ── GHOST ACTION BUTTONS ── */
+.ghost-btn {
+  background:     transparent;
+  border:         1px solid var(--border);
+  color:          var(--text-muted);
+  font-family:    'DM Mono', monospace;
+  font-size:      0.58rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding:        0.7rem;
+  cursor:         pointer;
+  border-radius:  2px;
+  transition:     border-color 0.2s, color 0.2s, background 0.2s;
+}
+.ghost-btn:hover {
+  border-color: var(--border2);
+  color:        var(--text);
+}
+.ghost-btn-primary {
+  border-color: var(--amber);
+  color:        var(--amber-light);
+}
+.ghost-btn-primary:hover {
+  background: var(--amber-glow);
+}
+
+/* ── BOARD SVG LINES ── */
+.board-line {
+  stroke:       rgba(255, 255, 255, 0.1);
+  stroke-width: 2;
+  transition:   stroke 0.4s, stroke-width 0.4s;
+}
+.board-line.win-line {
+  stroke:       rgba(255, 210, 90, 0.7);
+  stroke-width: 3.5;
+}
+
+/* ── UTILITY ── */
+.hidden { display: none !important; }
